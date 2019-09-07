@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 
@@ -45,5 +44,15 @@ func CreateSecret(requestBody io.Reader) SecretResponse {
 
 // GetSecret will return the secret content stored and delete it
 func GetSecret(secretID string) string {
-	return fmt.Sprintf("%s", secretID)
+	secretContents, err := aws.GetSecret(secretID)
+	if err != nil {
+		log.Fatal("Unable to get secret")
+		return ""
+	}
+	err = aws.DeleteSecret(secretID)
+	if err != nil {
+		log.Fatal("Unable to delete secret")
+		return ""
+	}
+	return secretContents
 }
