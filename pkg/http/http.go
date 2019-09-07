@@ -31,8 +31,8 @@ func main() {
 
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", index).Methods("GET")
-	router.HandleFunc("/api/v1/secret/create", createSecret).Methods("POST")
-	router.HandleFunc("/api/v1/secret/get/{secretID}", getSecret).Methods("GET")
+	router.HandleFunc("/api/v1/secret", createSecret).Methods("POST")
+	router.HandleFunc("/api/v1/secret/{secretID}", getSecret).Methods("GET")
 
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
