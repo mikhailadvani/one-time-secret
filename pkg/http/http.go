@@ -16,9 +16,8 @@ func index(w http.ResponseWriter, r *http.Request) {
 
 func createSecret(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	todo := api.CreateSecret(r.Body)
-
-	json.NewEncoder(w).Encode(todo)
+	secret := api.CreateSecret(r.Body)
+	json.NewEncoder(w).Encode(secret)
 }
 
 func getSecret(w http.ResponseWriter, r *http.Request) {

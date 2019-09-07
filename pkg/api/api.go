@@ -5,12 +5,13 @@ import (
 	"fmt"
 	"io"
 	"log"
+
+	"github.com/one-time-secret/pkg/aws"
 )
 
 // SecretRequest is the type for requesting secret
 type SecretRequest struct {
-	Content  string `json:"content,omitempty"`
-	ValidFor int    `json:"validFor,omitempty"`
+	Content string `json:"content,omitempty"`
 }
 
 // SecretResponse is the type for requesting secret
@@ -31,8 +32,14 @@ func CreateSecret(requestBody io.Reader) SecretResponse {
 	err := decoder.Decode(&request)
 	if err != nil {
 		log.Fatal("Unable to unmarshal request", err)
+		return SecretResponse{}
 	}
-	secretResponse := SecretResponse{URL: "https://localhost"}
+	secretLocation, err := aws.UploadSecret(request.Content)
+	if err != nil {
+		log.Fatal("Unable to upload secret", err)
+		return SecretResponse{}
+	}
+	secretResponse := SecretResponse{URL: secretLocation}
 	return secretResponse
 }
 
