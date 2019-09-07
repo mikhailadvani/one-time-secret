@@ -5,7 +5,7 @@ import (
 	"io"
 	"log"
 
-	"github.com/one-time-secret/pkg/aws"
+	"github.com/mikhailadvani/one-time-secret/pkg/aws"
 )
 
 // SecretRequest is the type for requesting secret

@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/one-time-secret/pkg/api"
+	"github.com/mikhailadvani/one-time-secret/pkg/api"
 )
 
 func index(w http.ResponseWriter, r *http.Request) {

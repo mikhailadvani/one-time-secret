@@ -11,7 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/google/uuid"
-	configf "github.com/one-time-secret/pkg/config"
+	configf "github.com/mikhailadvani/one-time-secret/pkg/config"
 )
 
 var config = configf.LoadConfig()
