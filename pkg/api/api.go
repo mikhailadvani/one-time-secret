@@ -3,20 +3,26 @@ package api
 import (
 	"encoding/json"
 	"io"
-	"log"
+	"net/http"
 
 	"github.com/mikhailadvani/one-time-secret/pkg/aws"
 )
 
-// SecretRequest is the type for requesting secret
-type SecretRequest struct {
+// CreateSecretRequest is the type for requesting secret creation
+type CreateSecretRequest struct {
 	Content string `json:"content,omitempty"`
 }
 
-// SecretResponse is the type for requesting secret
-type SecretResponse struct {
-	URL      string `json:"url,omitempty"`
-	ValidFor int    `json:"validFor,omitempty"`
+// CreateSecretResponse is the response type for requesting secret creation
+type CreateSecretResponse struct {
+	URL    string `json:"url,omitempty"`
+	Status int    `json:"status,omitempty"`
+}
+
+// GetSecretResponse is the response type for requesting secret retrieval
+type GetSecretResponse struct {
+	Content string `json:"content,omitempty"`
+	Status  int    `json:"status,omitempty"`
 }
 
 // Index will return the welcome screen. Static HTML page from S3
@@ -25,34 +31,30 @@ func Index() string {
 }
 
 // CreateSecret will create a secret object an return a URL to access it by
-func CreateSecret(requestBody io.Reader) SecretResponse {
+func CreateSecret(requestBody io.Reader) (CreateSecretResponse, error) {
 	decoder := json.NewDecoder(requestBody)
-	var request SecretRequest
+	var request CreateSecretRequest
 	err := decoder.Decode(&request)
 	if err != nil {
-		log.Fatal("Unable to unmarshal request", err)
-		return SecretResponse{}
+		return CreateSecretResponse{Status: http.StatusInternalServerError}, err
 	}
 	secretLocation, err := aws.UploadSecret(request.Content)
 	if err != nil {
-		log.Fatal("Unable to upload secret", err)
-		return SecretResponse{}
+		return CreateSecretResponse{Status: http.StatusInternalServerError}, err
 	}
-	secretResponse := SecretResponse{URL: secretLocation}
-	return secretResponse
+	secretResponse := CreateSecretResponse{URL: secretLocation, Status: http.StatusOK}
+	return secretResponse, nil
 }
 
 // GetSecret will return the secret content stored and delete it
-func GetSecret(secretID string) string {
+func GetSecret(secretID string) (GetSecretResponse, error) {
 	secretContents, err := aws.GetSecret(secretID)
 	if err != nil {
-		log.Fatal("Unable to get secret")
-		return ""
+		return GetSecretResponse{Status: http.StatusInternalServerError}, err
 	}
 	err = aws.DeleteSecret(secretID)
 	if err != nil {
-		log.Fatal("Unable to delete secret")
-		return ""
+		return GetSecretResponse{Status: http.StatusInternalServerError}, err
 	}
-	return secretContents
+	return GetSecretResponse{Content: secretContents, Status: http.StatusOK}, nil
 }

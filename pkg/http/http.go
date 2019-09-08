@@ -16,15 +16,21 @@ func index(w http.ResponseWriter, r *http.Request) {
 
 func createSecret(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	secret := api.CreateSecret(r.Body)
+	secret, err := api.CreateSecret(r.Body)
+	if err != nil {
+		http.Error(w, "{}", secret.Status)
+	}
 	json.NewEncoder(w).Encode(secret)
 }
 
 func getSecret(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	secretID := vars["secretID"]
-
-	fmt.Fprintln(w, api.GetSecret(secretID))
+	secret, err := api.GetSecret(secretID)
+	if err != nil {
+		http.Error(w, "{}", secret.Status)
+	}
+	fmt.Fprintln(w, secret.Content)
 }
 
 func main() {

@@ -3,7 +3,6 @@ package aws
 import (
 	"bytes"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -25,6 +24,7 @@ func UploadSecret(content string) (string, error) {
 		Region: aws.String(config.AwsRegion)},
 	)
 	if err != nil {
+		fmt.Println(err.Error())
 		return "", err
 	}
 	svc := s3.New(sess)
@@ -37,14 +37,7 @@ func UploadSecret(content string) (string, error) {
 
 	_, err = svc.PutObject(input)
 	if err != nil {
-		if aerr, ok := err.(awserr.Error); ok {
-			switch aerr.Code() {
-			default:
-				log.Fatal(aerr.Error())
-			}
-		} else {
-			log.Fatal(err.Error())
-		}
+		fmt.Println(err.Error())
 		return "", err
 	}
 	return unprefixedKey, nil
