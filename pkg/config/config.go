@@ -11,6 +11,7 @@ type Config struct {
 	BucketName  string `json:"bucketName,omitempty"`
 	S3Prefix    string `json:"s3Prefix,omitempty"`
 	S3ObjectACL string `json:"s3ObjectACL,omitempty"`
+	BaseURL     string `json:"baseURL,omitempty"`
 }
 
 // LoadConfig loads config attributes from env variables and returns Config object merged with defaults
@@ -19,11 +20,13 @@ func LoadConfig() Config {
 	bucketName := getMandatoryEnvironmentVariable("BUCKET_NAME")
 	s3Prefix := getOptionalEnvironmentVariable("S3_PREFIX", "")
 	s3objectACL := getOptionalEnvironmentVariable("S3_OBJECT_ACL", "bucket-owner-full-control")
+	baseURL := getOptionalEnvironmentVariable("BASE_URL", "http://localhost:8080")
 	config := Config{
 		AwsRegion:   awsRegion,
 		BucketName:  bucketName,
 		S3Prefix:    s3Prefix,
 		S3ObjectACL: s3objectACL,
+		BaseURL:     baseURL,
 	}
 	return config
 }

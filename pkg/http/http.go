@@ -20,7 +20,13 @@ func index(w http.ResponseWriter, r *http.Request) {
 
 func createSecret(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	secret, err := api.CreateSecret(r.Body, r.Host+getEndpointBase)
+	decoder := json.NewDecoder(r.Body)
+	var request api.CreateSecretRequest
+	err := decoder.Decode(&request)
+	if err != nil {
+		http.Error(w, "{}", http.StatusInternalServerError)
+	}
+	secret, err := api.CreateSecret(request, r.Host+getEndpointBase)
 	if err != nil {
 		http.Error(w, "{}", secret.Status)
 	}

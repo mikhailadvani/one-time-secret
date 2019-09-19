@@ -1,9 +1,7 @@
 package api
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 
 	"github.com/mikhailadvani/one-time-secret/pkg/aws"
@@ -63,18 +61,12 @@ func Index(createAPIEndpoint string) string {
 }
 
 // CreateSecret will create a secret object an return a URL to access it by
-func CreateSecret(requestBody io.Reader, prefix string) (CreateSecretResponse, error) {
-	decoder := json.NewDecoder(requestBody)
-	var request CreateSecretRequest
-	err := decoder.Decode(&request)
-	if err != nil {
-		return CreateSecretResponse{Status: http.StatusInternalServerError}, err
-	}
+func CreateSecret(request CreateSecretRequest, responseURLPrefix string) (CreateSecretResponse, error) {
 	secretLocation, err := aws.UploadSecret(request.Content)
 	if err != nil {
 		return CreateSecretResponse{Status: http.StatusInternalServerError}, err
 	}
-	secretResponse := CreateSecretResponse{URL: fmt.Sprintf("%s/%s", prefix, secretLocation), Status: http.StatusOK}
+	secretResponse := CreateSecretResponse{URL: fmt.Sprintf("%s/%s", responseURLPrefix, secretLocation), Status: http.StatusOK}
 	return secretResponse, nil
 }
 
