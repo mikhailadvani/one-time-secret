@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -16,7 +17,15 @@ var config = configf.LoadConfig()
 
 func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	responseURLPrefix := fmt.Sprintf("%s%s", request.Headers["origin"], getEndpointBase)
-	createSecretRequest := api.CreateSecretRequest{Content: request.Body}
+	decoder := json.NewDecoder(strings.NewReader(request.Body))
+	var createSecretRequest api.CreateSecretRequest
+	err := decoder.Decode(&createSecretRequest)
+	if err != nil {
+		fmt.Printf("Error: %s", err)
+		return events.APIGatewayProxyResponse{
+			StatusCode: http.StatusInternalServerError,
+		}, nil
+	}
 	secret, err := api.CreateSecret(createSecretRequest, responseURLPrefix)
 	if err != nil {
 		return events.APIGatewayProxyResponse{
