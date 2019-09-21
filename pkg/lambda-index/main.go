@@ -10,7 +10,7 @@ var createEndpoint = "/api/secret"
 
 func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	return events.APIGatewayProxyResponse{
-		Headers:    map[string]string{"content-type": "text/html"},
+		Headers:    map[string]string{"Content-Type": "text/html"},
 		Body:       api.Index(createEndpoint),
 		StatusCode: 200,
 	}, nil
