@@ -20,13 +20,32 @@ The following configuration parameters can be provided the tool through environm
 
 ## IAM permissions required
 
+* For the creation, access and deletion of secrets, a very minimal set of IAM permissions limited to the folder in the S3 bucket being used is required. Exact policy can be seen [here](./terraform/module/s3.tf).
+
 ## Lambda setup
 
+* There is also a possibility to run the setup on AWS Lambda behind API Gateway. Terraform configuration for the setup can be found [here](./terraform/module/lambda.tf).
+
+## Deployment automation with terraform
+
+* Terraform module to configure the entire setup is present which can be incorporated easily. Usage of variables below:
+
+| Scenario                                              | create_bucket | lambda_enabled | lambda_logging_enabled |
+| ----------------------------------------------------- | ------------- | -------------- | ---------------------- |
+| Run on Lambda with a new bucket with logging          | true          | true           | true                   |
+| Run on Lambda with a new bucket without logging       | true          | true           | false                  |
+| Run on Lambda with an existing bucket with logging    | false         | true           | true                   |
+| Run on Lambda with an existing bucket without logging | false         | true           | false                  |
+| Run outside Lambda with a new bucket                  | true          | false          | false                  |
+| Run outside Lambda with an existing bucket            | false         | false          | false                  |
+
 ## Running of a custom domain
+
+* Not yet supported. Future goal.
 
 ## Gotcha's
 
 * In case the one-time-secret app authenticates with AWS through an account different than one where the bucket is stored, PutObjectAcl privileges will also be required to ensure clean ownership of objects.
 * Versioning: Ensure that versioning is disabled on the bucket which is being used as a backend of the one-time-secret, otherwise deleted objects can be retrieved.
-* Lifecycle policies: It is recommended to have an aggressive lifecycle policy applied to the bucket. This is a safety net to ensure that in case the deletion during retrieval fails for whatever reason, the lifecycle policy deletion will kick in to delete the contents.
+* Lifecycle policies: It is recommended to have an aggressive lifecycle policy applied to the bucket. This is a safety net to ensure that in case the deletion during retrieval fails for whatever reason, the lifecycle policy deletion will kick in to delete the contents. This has not yet been automated in the terraform setup.
 * Since this is written in GoLang and the AWS sdk-for-go has a known bug related to cross account authentication, you might need to set the environment variable `AWS_SDK_LOAD_CONFIG=1`.
