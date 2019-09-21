@@ -6,7 +6,7 @@ import (
 	"github.com/mikhailadvani/one-time-secret/pkg/api"
 )
 
-var createEndpoint = "/api/v1/secret"
+var createEndpoint = "/api/secret"
 
 func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	return events.APIGatewayProxyResponse{

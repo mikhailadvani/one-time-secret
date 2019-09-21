@@ -9,7 +9,7 @@ import (
 	configf "github.com/mikhailadvani/one-time-secret/pkg/config"
 )
 
-var getEndpointBase = "/api/v1/secret"
+var getEndpointBase = "/api/secret"
 var config = configf.LoadConfig()
 
 func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {

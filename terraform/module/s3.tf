@@ -1,7 +1,8 @@
 resource "aws_s3_bucket" "secret_bucket" {
-  count  = var.create_bucket == true ? 1 : 0
-  bucket = var.bucket_name
-  acl    = "private"
+  count         = var.create_bucket == true ? 1 : 0
+  bucket        = var.bucket_name
+  acl           = "private"
+  force_destroy = true
   versioning {
     enabled = false
   }

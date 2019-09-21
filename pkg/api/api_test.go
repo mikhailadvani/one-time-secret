@@ -10,7 +10,7 @@ import (
 )
 
 func TestIndexHtml(t *testing.T) {
-	createEndpoint := "api/v1/secret"
+	createEndpoint := "api/secret"
 	indexHTML := Index(createEndpoint)
 	assert.Contains(t, indexHTML, "var secret_text = document.getElementById(\"input_secret\").value;") // Get secret_text var
 	assert.Contains(t, indexHTML, fmt.Sprintf("xhttp.open(\"POST\", \"%s\", true);", createEndpoint))   // POST request

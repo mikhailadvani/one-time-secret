@@ -23,11 +23,11 @@ resource "aws_lambda_permission" "api_gateway_trigger" {
 ## START Upload archive to S3 and consume in lambda
 
 resource "aws_s3_bucket_object" "lambda_functions" {
-  for_each = local.lambda_functions
-  bucket   = var.bucket_name
-  key      = "${local.lambda_s3_location}${local.project_name}-${each.key}"
-  source   = "${var.lambda_functions_location}${local.project_name}-${each.key}.zip"
-  etag     = "${filemd5("${var.lambda_functions_location}${local.project_name}-${each.key}.zip")}"
+  for_each   = local.lambda_functions
+  bucket     = var.bucket_name
+  key        = "${local.lambda_s3_location}${local.project_name}-${each.key}"
+  source     = "${var.lambda_functions_location}${local.project_name}-${each.key}.zip"
+  etag       = "${filemd5("${var.lambda_functions_location}${local.project_name}-${each.key}.zip")}"
   depends_on = [aws_s3_bucket.secret_bucket]
 }
 

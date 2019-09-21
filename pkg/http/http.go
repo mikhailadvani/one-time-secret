@@ -10,9 +10,9 @@ import (
 	"github.com/mikhailadvani/one-time-secret/pkg/api"
 )
 
-var getEndpointBase = "/api/v1/secret"
+var getEndpointBase = "/api/secret"
 var getEndpoint = fmt.Sprintf("%s/{secretID}", getEndpointBase)
-var createEndpoint = "/api/v1/secret"
+var createEndpoint = "/api/secret"
 
 func index(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, api.Index(createEndpoint))
