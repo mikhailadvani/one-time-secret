@@ -5,11 +5,15 @@ install:
 test:
 	go test ./pkg/...
 
-build:
+build: build_local build_lambda
+
+build_local:
 	mkdir -p ./build
-	mkdir -p ./build/lambda
 	GOOS=linux go build -o ./build/one-time-secret-http-linux pkg/http/http.go
 	GOOS=darwin go build -o ./build/one-time-secret-http-darwin pkg/http/http.go
+
+build_lambda:
+	mkdir -p ./build/lambda
 	GOOS=linux GOARCH=amd64 go build -o ./build/lambda/one-time-secret-index pkg/lambda-index/main.go
 	GOOS=linux GOARCH=amd64 go build -o ./build/lambda/one-time-secret-create pkg/lambda-create/main.go
 	GOOS=linux GOARCH=amd64 go build -o ./build/lambda/one-time-secret-get pkg/lambda-get/main.go
@@ -24,10 +28,13 @@ clean:
 run_local:
 	go run ./pkg/http/http.go
 
-run_lambda: build
-	cd terraform/root
-	terraform init
-	terraform apply -auto-approve
+run_lambda: build_lambda
+	terraform init terraform/root
+	terraform apply -auto-approve terraform/root
+
+destroy_lambda:
+	terraform init terraform/root
+	terraform destroy -auto-approve terraform/root
 
 fmt:
-	go fmt ./pkg/... ./test/...
+	go fmt ./pkg/...
