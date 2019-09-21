@@ -12,9 +12,9 @@ import (
 func TestIndexHtml(t *testing.T) {
 	createEndpoint := "api/secret"
 	indexHTML := Index(createEndpoint)
-	assert.Contains(t, indexHTML, "var secret_text = document.getElementById(\"input_secret\").value;") // Get secret_text var
-	assert.Contains(t, indexHTML, fmt.Sprintf("xhttp.open(\"POST\", \"%s\", true);", createEndpoint))   // POST request
-	assert.Contains(t, indexHTML, "xhttp.send(`{\"content\": \"${secret_text}\"}`);")                   // POST body
+	assert.Contains(t, indexHTML, "var secret_text = document.getElementById(\"input_secret\").value;")              // Get secret_text var
+	assert.Contains(t, indexHTML, fmt.Sprintf("xhttp.open(\"POST\", \"%s\", true);", createEndpoint))                // POST request
+	assert.Contains(t, indexHTML, "xhttp.send(`{\"content\": \"${secret_text}\", \"encoding\": \"${encoding}\"}`);") // POST body
 }
 
 func TestLifeCycle(t *testing.T) {
@@ -37,4 +37,16 @@ func TestLifeCycle(t *testing.T) {
 	assert.Equal(t, http.StatusInternalServerError, getResponse2.Status)
 	assert.Equal(t, "", getResponse2.Content)
 	assert.NotNil(t, getResponseErr2)
+}
+
+func TestBase64EncodedContent(t *testing.T) {
+	secretData := `1234
+1234`
+	base64EncodedData := "MTIzNAoxMjM0"
+	request := CreateSecretRequest{Content: base64EncodedData, Encoding: "base64"}
+	responseURLPrefix := "abcd"
+	createResponse, _ := CreateSecret(request, responseURLPrefix)
+	secretID := strings.Replace(createResponse.URL, responseURLPrefix, "", 1)
+	getResponse, _ := GetSecret(secretID)
+	assert.Equal(t, secretData, getResponse.Content)
 }

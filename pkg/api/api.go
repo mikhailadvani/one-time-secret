@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/base64"
 	"fmt"
 	"net/http"
 
@@ -9,7 +10,8 @@ import (
 
 // CreateSecretRequest is the type for requesting secret creation
 type CreateSecretRequest struct {
-	Content string `json:"content,omitempty"`
+	Content  string `json:"content,omitempty"`
+	Encoding string `json:"encoding,omitempty"`
 }
 
 // CreateSecretResponse is the response type for requesting secret creation
@@ -34,7 +36,7 @@ func Index(createAPIEndpoint string) string {
 	<div style="width:600px; margin:0 auto;display:flex;justify-content:center;" id="container">
 		<div id="create">
 			<h2>Enter your secret</h2>
-		  <input id="input_secret"></input>
+			<textarea id="input_secret" rows="4" cols="50"></textarea>
 		  <button type="button" onclick="create()">Submit</button>
 		</div>
 	</div>
@@ -47,13 +49,19 @@ func Index(createAPIEndpoint string) string {
 	  function create() {
 	    var xhttp = new XMLHttpRequest();
 			var secret_text = document.getElementById("input_secret").value;
+			if (secret_text.indexOf("\n") == -1) {
+				encoding = "utf-8"
+			} else {
+				secret_text = btoa(secret_text)
+				encoding = "base64"
+			}
 	    xhttp.onreadystatechange = function() {
 	      if (this.readyState == 4 && this.status == 200) {
 	       document.getElementById("generated_secret_id").innerHTML = JSON.parse(this.responseText).url;
 	      }
 	    };
 	    xhttp.open("POST", "` + createAPIEndpoint + `", true);
-	    xhttp.send(` + "`" + `{"content": "${secret_text}"}` + "`" + `);
+	    xhttp.send(` + "`" + `{"content": "${secret_text}", "encoding": "${encoding}"}` + "`" + `);
 	  }
 	</script>
 	</html>
@@ -62,7 +70,14 @@ func Index(createAPIEndpoint string) string {
 
 // CreateSecret will create a secret object an return a URL to access it by
 func CreateSecret(request CreateSecretRequest, responseURLPrefix string) (CreateSecretResponse, error) {
-	secretLocation, err := aws.UploadSecret(request.Content)
+	var plainTextContent string
+	if request.Encoding == "base64" {
+		plainTextBytes, _ := base64.StdEncoding.DecodeString(request.Content)
+		plainTextContent = string(plainTextBytes)
+	} else {
+		plainTextContent = request.Content
+	}
+	secretLocation, err := aws.UploadSecret(plainTextContent)
 	if err != nil {
 		return CreateSecretResponse{Status: http.StatusInternalServerError}, err
 	}

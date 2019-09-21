@@ -3,7 +3,7 @@ install:
 	dep ensure
 
 test:
-	go test -v ./pkg/...
+	go test ./pkg/...
 
 build:
 	mkdir -p ./build
