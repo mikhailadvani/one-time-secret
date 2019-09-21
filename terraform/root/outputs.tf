@@ -9,3 +9,7 @@ output index_endpoint {
 output create_endpoint {
   value = module.one_time_secret.create_endpoint
 }
+
+output get_endpoint {
+  value = module.one_time_secret.get_endpoint
+}

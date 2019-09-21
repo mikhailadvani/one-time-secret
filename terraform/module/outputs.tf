@@ -10,6 +10,13 @@ output create_endpoint {
   }
 }
 
+output get_endpoint {
+  value = {
+    url    = "${aws_api_gateway_deployment.this[0].invoke_url}/${local.lambda_functions["get"]["resource"]}"
+    method = aws_api_gateway_method.get[0].http_method
+  }
+}
+
 output index_endpoint {
   value = {
     url    = "${aws_api_gateway_deployment.this[0].invoke_url}/${local.lambda_functions["index"]["resource"]}"
