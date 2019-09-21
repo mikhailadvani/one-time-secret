@@ -1,0 +1,6 @@
+*
+!pkg
+!vendor
+!Dockerfile
+!Makefile
+!Gopkg.toml
