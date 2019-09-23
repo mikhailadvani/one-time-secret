@@ -9,7 +9,7 @@ resource "aws_s3_bucket" "secret_bucket" {
 }
 
 resource "aws_iam_policy" "secret_object_crud" {
-  name        = "${local.project_name}-operator"
+  name        = "${var.project_name}-operator"
   path        = "/"
   description = "IAM policy to CRUD on ${var.bucket_name} bucket under ${var.bucket_prefix}* path for managing secrets."
 

@@ -2,6 +2,11 @@ variable region {
   description = "AWS region to create the components in."
 }
 
+variable project_name {
+  default     = "one-time-secret"
+  description = "Name of the complete setup. Used at several places including Lambda, KMS, etc."
+}
+
 variable bucket_name {
   description = "Name of the S3 bucket which will store the secrets."
 }
@@ -19,11 +24,6 @@ variable bucket_prefix {
 variable lambda_enabled {
   default     = false
   description = "Whether the lambda function should be deployed"
-}
-
-variable lambda_name_prefix {
-  default     = "one-time-secret"
-  description = "Name to the lambda functions."
 }
 
 variable lambda_functions_location {

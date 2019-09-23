@@ -47,3 +47,4 @@ docker: install
 
 fmt:
 	go fmt ./pkg/...
+	terraform fmt -recursive ./terraform

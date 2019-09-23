@@ -2,7 +2,7 @@
 
 resource "aws_api_gateway_rest_api" "this" {
   count = var.lambda_enabled == true ? 1 : 0
-  name  = local.project_name
+  name  = var.project_name
 
   endpoint_configuration {
     types = ["REGIONAL"]
@@ -13,7 +13,7 @@ resource "aws_lambda_permission" "api_gateway_trigger" {
   for_each      = local.lambda_functions
   statement_id  = "ApiGatewayInvoke${each.key}"
   action        = "lambda:InvokeFunction"
-  function_name = "${local.project_name}-${each.key}"
+  function_name = "${var.project_name}-${each.key}"
   principal     = "apigateway.amazonaws.com"
 
   source_arn = "${aws_api_gateway_rest_api.this[0].execution_arn}/*/*/*"
@@ -25,9 +25,9 @@ resource "aws_lambda_permission" "api_gateway_trigger" {
 resource "aws_s3_bucket_object" "lambda_functions" {
   for_each   = local.lambda_functions
   bucket     = var.bucket_name
-  key        = "${local.lambda_s3_location}${local.project_name}-${each.key}"
-  source     = "${var.lambda_functions_location}${local.project_name}-${each.key}.zip"
-  etag       = "${filemd5("${var.lambda_functions_location}${local.project_name}-${each.key}.zip")}"
+  key        = "${local.lambda_s3_location}${var.project_name}-${each.key}"
+  source     = "${var.lambda_functions_location}${var.project_name}-${each.key}.zip"
+  etag       = "${filemd5("${var.lambda_functions_location}${var.project_name}-${each.key}.zip")}"
   depends_on = [aws_s3_bucket.secret_bucket]
 }
 
@@ -35,9 +35,9 @@ resource "aws_lambda_function" "this" {
   for_each      = local.lambda_functions
   s3_bucket     = var.bucket_name
   s3_key        = aws_s3_bucket_object.lambda_functions[each.key].id
-  function_name = "${local.project_name}-${each.key}"
+  function_name = "${var.project_name}-${each.key}"
   role          = aws_iam_role.lambda[0].arn
-  handler       = "${local.project_name}-${each.key}"
+  handler       = "${var.project_name}-${each.key}"
 
   runtime = "go1.x"
 
@@ -53,7 +53,7 @@ resource "aws_lambda_function" "this" {
 ## START IAM role & policy for operation
 resource "aws_iam_role" "lambda" {
   count = var.lambda_enabled == true ? 1 : 0
-  name  = var.lambda_name_prefix
+  name  = var.project_name
 
   assume_role_policy = <<EOF
 {
@@ -82,27 +82,27 @@ resource "aws_iam_role_policy_attachment" "lambda_s3" {
 
 resource "aws_cloudwatch_log_group" "index" {
   count             = local.lambda_logging_enabled == true ? 1 : 0
-  name              = "/aws/lambda/${var.lambda_name_prefix}-index"
+  name              = "/aws/lambda/${var.project_name}-index"
   retention_in_days = 7
 }
 
 resource "aws_cloudwatch_log_group" "create" {
   count             = local.lambda_logging_enabled == true ? 1 : 0
-  name              = "/aws/lambda/${var.lambda_name_prefix}-create"
+  name              = "/aws/lambda/${var.project_name}-create"
   retention_in_days = 7
 }
 
 resource "aws_cloudwatch_log_group" "get" {
   count             = local.lambda_logging_enabled == true ? 1 : 0
-  name              = "/aws/lambda/${var.lambda_name_prefix}-get"
+  name              = "/aws/lambda/${var.project_name}-get"
   retention_in_days = 7
 }
 
 resource "aws_iam_policy" "lambda_logging" {
   count       = local.lambda_logging_enabled == true ? 1 : 0
-  name        = "lambda-logging-${var.lambda_name_prefix}"
+  name        = "lambda-logging-${var.project_name}"
   path        = "/"
-  description = "IAM policy for logging from a lambda of ${var.lambda_name_prefix}"
+  description = "IAM policy for logging from a lambda of ${var.project_name}"
 
   policy = <<EOF
 {
