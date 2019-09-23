@@ -34,11 +34,13 @@ clean:
 run_local:
 	go run ./pkg/http/http.go
 
-run_lambda: build_lambda
+terraform_apply:
 	terraform init terraform/root
 	terraform apply -auto-approve terraform/root
 
-destroy_lambda:
+run_lambda: build_lambda terraform_apply
+
+terraform_destroy:
 	terraform init terraform/root
 	terraform destroy -auto-approve terraform/root
 

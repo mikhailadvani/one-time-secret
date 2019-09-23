@@ -43,8 +43,9 @@ resource "aws_lambda_function" "this" {
 
   environment {
     variables = {
-      BUCKET_NAME = var.bucket_name
-      S3_PREFIX   = var.bucket_prefix
+      BUCKET_NAME   = var.bucket_name
+      S3_PREFIX     = var.bucket_prefix
+      KMS_KEY_ALIAS = local.kms_key_alias
     }
   }
 }

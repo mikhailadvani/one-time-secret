@@ -39,3 +39,8 @@ variable lambda_logging_enabled {
   default     = false
   description = "Whether cloudwatch logging should be enabled or not."
 }
+
+variable existing_iam_role {
+  default     = ""
+  description = "Existing IAM role to be granted privilege to operate using the KMS key."
+}
