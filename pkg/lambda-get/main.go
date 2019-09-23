@@ -15,7 +15,7 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		}, nil
 	}
 	return events.APIGatewayProxyResponse{
-		Headers:    map[string]string{"Content-Type": "text/html"},
+		Headers:    map[string]string{"Content-Type": "text/plain"},
 		Body:       secret.Content,
 		StatusCode: secret.Status,
 	}, nil

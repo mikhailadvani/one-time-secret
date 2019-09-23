@@ -34,6 +34,7 @@ func createSecret(w http.ResponseWriter, r *http.Request) {
 }
 
 func getSecret(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/plain")
 	vars := mux.Vars(r)
 	secretID := vars["secretID"]
 	secret, err := api.GetSecret(secretID)
