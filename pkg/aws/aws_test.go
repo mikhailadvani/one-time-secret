@@ -25,3 +25,14 @@ func TestLifeCycle(t *testing.T) {
 	assert.Equal(t, err.(awserr.Error), err)
 	assert.Equal(t, s3.ErrCodeNoSuchKey, aerr.Code())
 }
+
+func TestEncryption(t *testing.T) {
+	inputText := "some-random-text-to-be-encrypted"
+	encryptedText, encryptionError := Encrypt(inputText)
+	assert.Nil(t, encryptionError)
+	assert.NotEqual(t, inputText, encryptedText)
+
+	plainText, decryptionError := Decrypt(encryptedText)
+	assert.Nil(t, decryptionError)
+	assert.Equal(t, inputText, plainText)
+}

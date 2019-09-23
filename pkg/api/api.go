@@ -77,7 +77,12 @@ func CreateSecret(request CreateSecretRequest, responseURLPrefix string) (Create
 	} else {
 		plainTextContent = request.Content
 	}
-	secretLocation, err := aws.UploadSecret(plainTextContent)
+	encryptedContent, err := aws.Encrypt(plainTextContent)
+	if err != nil {
+		fmt.Println(err.Error())
+		return CreateSecretResponse{Status: http.StatusInternalServerError}, err
+	}
+	secretLocation, err := aws.UploadSecret(encryptedContent)
 	if err != nil {
 		return CreateSecretResponse{Status: http.StatusInternalServerError}, err
 	}
@@ -91,9 +96,13 @@ func GetSecret(secretID string) (GetSecretResponse, error) {
 	if err != nil {
 		return GetSecretResponse{Status: http.StatusInternalServerError}, err
 	}
+	decryptedContent, err := aws.Decrypt(secretContents)
+	if err != nil {
+		return GetSecretResponse{Status: http.StatusInternalServerError}, err
+	}
 	err = aws.DeleteSecret(secretID)
 	if err != nil {
 		return GetSecretResponse{Status: http.StatusInternalServerError}, err
 	}
-	return GetSecretResponse{Content: secretContents, Status: http.StatusOK}, nil
+	return GetSecretResponse{Content: decryptedContent, Status: http.StatusOK}, nil
 }

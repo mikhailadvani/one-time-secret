@@ -18,3 +18,13 @@ resource "aws_kms_grant" "this" {
   grantee_principal = coalesce(join("", data.aws_iam_role.existing.*.arn), aws_iam_role.lambda[0].arn)
   operations        = ["Encrypt", "Decrypt"]
 }
+
+data "aws_caller_identity" "current" {}
+
+resource "aws_kms_grant" "developer_setup" {
+  count             = var.developer_setup == true ? 1 : 0
+  name              = var.project_name
+  key_id            = aws_kms_key.this.key_id
+  grantee_principal = data.aws_caller_identity.current.arn
+  operations        = ["Encrypt", "Decrypt"]
+}

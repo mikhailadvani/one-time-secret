@@ -17,7 +17,7 @@ variable create_bucket {
 }
 
 variable bucket_prefix {
-  default     = "/"
+  default     = ""
   description = "The prefix under which all secrets will be created. Used to define IAM restrictions. Trailing / needed."
 }
 
@@ -43,4 +43,9 @@ variable lambda_logging_enabled {
 variable existing_iam_role {
   default     = ""
   description = "Existing IAM role to be granted privilege to operate using the KMS key."
+}
+
+variable developer_setup {
+  default     = false
+  description = "Whether the current ARN should be given access to KMS to run tests."
 }

@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	awsf "github.com/mikhailadvani/one-time-secret/pkg/aws"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -27,6 +28,9 @@ func TestLifeCycle(t *testing.T) {
 	assert.Nil(t, createResponseErr)
 
 	secretID := strings.Replace(createResponse.URL, responseURLPrefix, "", 1)
+	storedContent, getStoredContentErr := awsf.GetSecret(secretID)
+	assert.Nil(t, getStoredContentErr)
+	assert.NotEqual(t, secretData, storedContent)
 
 	getResponse, getResponseErr := GetSecret(secretID)
 	assert.Equal(t, http.StatusOK, getResponse.Status)

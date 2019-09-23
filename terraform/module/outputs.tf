@@ -24,6 +24,9 @@ output index_endpoint {
   }
 }
 
-output kms_key_alias {
-  value = local.kms_key_alias
+output kms_config {
+  value = {
+    alias    = local.kms_key_alias
+    grantees = [aws_kms_grant.this.grantee_principal, aws_kms_grant.developer_setup[0].grantee_principal]
+  }
 }
