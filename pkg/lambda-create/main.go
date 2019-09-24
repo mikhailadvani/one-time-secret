@@ -16,7 +16,8 @@ var getEndpointBase = "/api/secret"
 var config = configf.LoadConfig()
 
 func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	responseURLPrefix := fmt.Sprintf("%s%s", request.Headers["origin"], getEndpointBase)
+	baseURL := fmt.Sprintf("https://%s.execute-api.%s.amazonaws.com", request.RequestContext.APIID, config.AwsRegion)
+	responseURLPrefix := fmt.Sprintf("%s%s", baseURL, getEndpointBase)
 	decoder := json.NewDecoder(strings.NewReader(request.Body))
 	var createSecretRequest api.CreateSecretRequest
 	err := decoder.Decode(&createSecretRequest)

@@ -5,11 +5,15 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
+	"path"
 
 	"github.com/gorilla/mux"
 	"github.com/mikhailadvani/one-time-secret/pkg/api"
+	configf "github.com/mikhailadvani/one-time-secret/pkg/config"
 )
 
+var config = configf.LoadConfig()
 var getEndpointBase = "/api/secret"
 var getEndpoint = fmt.Sprintf("%s/{secretID}", getEndpointBase)
 var createEndpoint = "/api/secret"
@@ -26,7 +30,13 @@ func createSecret(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "{}", http.StatusInternalServerError)
 	}
-	secret, err := api.CreateSecret(request, r.Host+getEndpointBase)
+	baseURL, err := url.Parse(config.BaseURL)
+	if err != nil {
+		http.Error(w, "{}", http.StatusInternalServerError)
+	}
+	baseURL.Path = path.Join(baseURL.Path, getEndpointBase)
+	urlString := baseURL.String()
+	secret, err := api.CreateSecret(request, urlString)
 	if err != nil {
 		http.Error(w, "{}", secret.Status)
 	}
