@@ -26,7 +26,12 @@ output index_endpoint {
 
 output kms_config {
   value = {
-    alias    = local.kms_key_alias
-    grantees = [aws_kms_grant.this.grantee_principal, aws_kms_grant.developer_setup[0].grantee_principal]
+    alias = local.kms_key_alias
+    grantees = compact([
+      aws_kms_grant.existing_role[0].grantee_principal,
+      aws_kms_grant.lambda_role[0].grantee_principal,
+      aws_kms_grant.developer_setup[0].grantee_principal,
+      ],
+    ),
   }
 }

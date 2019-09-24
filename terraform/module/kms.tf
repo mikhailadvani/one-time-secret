@@ -12,10 +12,19 @@ data "aws_iam_role" "existing" {
   name  = var.existing_iam_role
 }
 
-resource "aws_kms_grant" "this" {
+resource "aws_kms_grant" "existing_role" {
+  count             = var.existing_iam_role == "" ? 0 : 1
   name              = var.project_name
   key_id            = aws_kms_key.this.key_id
-  grantee_principal = coalesce(join("", data.aws_iam_role.existing.*.arn), aws_iam_role.lambda[0].arn)
+  grantee_principal = join("", data.aws_iam_role.existing.*.arn)
+  operations        = ["Encrypt", "Decrypt"]
+}
+
+resource "aws_kms_grant" "lambda_role" {
+  count             = var.lambda_enabled == true ? 1 : 0
+  name              = var.project_name
+  key_id            = aws_kms_key.this.key_id
+  grantee_principal = aws_iam_role.lambda[0].arn
   operations        = ["Encrypt", "Decrypt"]
 }
 
