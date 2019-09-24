@@ -50,3 +50,6 @@ docker: install
 fmt:
 	go fmt ./pkg/...
 	terraform fmt -recursive ./terraform
+
+e2e_test: build_lambda
+	go test -v ./test/...

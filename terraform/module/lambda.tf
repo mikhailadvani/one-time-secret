@@ -26,8 +26,8 @@ resource "aws_s3_bucket_object" "lambda_functions" {
   for_each   = local.lambda_functions
   bucket     = var.bucket_name
   key        = "${local.lambda_s3_location}${var.project_name}-${each.key}"
-  source     = "${var.lambda_functions_location}${var.project_name}-${each.key}.zip"
-  etag       = "${filemd5("${var.lambda_functions_location}${var.project_name}-${each.key}.zip")}"
+  source     = "${var.lambda_functions_location}${local.project_name}-${each.key}.zip"
+  etag       = "${filemd5("${var.lambda_functions_location}${local.project_name}-${each.key}.zip")}"
   depends_on = [aws_s3_bucket.secret_bucket]
 }
 
@@ -37,7 +37,7 @@ resource "aws_lambda_function" "this" {
   s3_key        = aws_s3_bucket_object.lambda_functions[each.key].id
   function_name = "${var.project_name}-${each.key}"
   role          = aws_iam_role.lambda[0].arn
-  handler       = "${var.project_name}-${each.key}"
+  handler       = "${local.project_name}-${each.key}"
 
   runtime = "go1.x"
 
