@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/mikhailadvani/one-time-secret/pkg/aws"
+	"github.com/edcast/one-time-secret/pkg/aws"
 )
 
 // CreateSecretRequest is the type for requesting secret creation

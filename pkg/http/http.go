@@ -9,8 +9,8 @@ import (
 	"path"
 
 	"github.com/gorilla/mux"
-	"github.com/mikhailadvani/one-time-secret/pkg/api"
-	configf "github.com/mikhailadvani/one-time-secret/pkg/config"
+	"github.com/edcast/one-time-secret/pkg/api"
+	configf "github.com/edcast/one-time-secret/pkg/config"
 )
 
 var config = configf.LoadConfig()

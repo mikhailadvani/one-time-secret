@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	awsf "github.com/mikhailadvani/one-time-secret/pkg/aws"
+	awsf "github.com/edcast/one-time-secret/pkg/aws"
 	"github.com/stretchr/testify/assert"
 )
 
